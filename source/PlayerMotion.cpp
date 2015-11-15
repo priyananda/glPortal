@@ -57,26 +57,15 @@ void PlayerMotion::applyMinimaMaximaToVelocity(float dtime) {
 }
   
 void PlayerMotion::moveForward(float dtime) {
-  Transform &tform = entity.getComponent<Transform>();
-  float rot = tform.rotation.y;
-  Vector3f tmpVel;
+  //Transform &tform = entity.getComponent<Transform>();
+  //float rot = tform.rotation.y;
+  //Vector3f tmpVel;
   
-  tmpVel.x -= sin(rot);
-  tmpVel.z -= cos(rot);
-  tmpVel *= (speed * dtime);
+  //tmpVel.x -= sin(rot);
+  //tmpVel.z -= cos(rot);
+  //tmpVel *= (speed * dtime);
   //tmpVel *= speed;
 
-  if (velocity.x + tmpVel.x > 0.1) {
-    velocity.x = 0;
-  } else {
-    velocity.x += tmpVel.x;
-  }
-
-  if (velocity.z + tmpVel.z > 0.1) {
-    velocity.z = 0;
-  } else {
-    velocity.z += tmpVel.z;
-  }
   // applyMinimaMaximaToVelocity(dtime);
 }
   
@@ -85,9 +74,7 @@ void PlayerMotion::move(float dtime) {
        movingBack    = Input::isKeyDown(SDL_SCANCODE_S) or Input::isKeyDown(SDL_SCANCODE_DOWN),
        strafingLeft  = Input::isKeyDown(SDL_SCANCODE_A) or Input::isKeyDown(SDL_SCANCODE_LEFT),
        strafingRight = Input::isKeyDown(SDL_SCANCODE_D) or Input::isKeyDown(SDL_SCANCODE_RIGHT);
-  // applyMinimaMaximaToVelocity(dtime);
-  applyGravity(dtime);
-  return;
+
   if (velocity.x <= MIN_SPEED_ON_AXIS and velocity.x >= -MIN_SPEED_ON_AXIS) {
     velocity.x = 0;
   } else {
@@ -116,15 +103,18 @@ void PlayerMotion::move(float dtime) {
     Vector3f tmpVel;
     double yMult = flying ? cos(tform.rotation.x) : 1;
     if (movingFwd) {
-      //      tmpVel.x -= sin(rot) * yMult;
-      //      tmpVel.z -= cos(rot) * yMult;
-      //      if (flying) {
-      //        tmpVel.y += sin(tform.rotation.x);
-      //      }
+      tmpVel.x -= sin(rot) * yMult;
+      tmpVel.z -= cos(rot) * yMult;
+      if (flying) {
+        tmpVel.y += sin(tform.rotation.x);
+      }
     }
     if (movingBack) {
       tmpVel.x += sin(rot) * yMult;
       tmpVel.z += cos(rot) * yMult;
+      if (flying) {
+        tmpVel.y -= sin(tform.rotation.x);
+      }
     }
     if (strafingLeft) {
       tmpVel.x += -cos(rot);
@@ -139,7 +129,34 @@ void PlayerMotion::move(float dtime) {
       tmpVel.normalise();
     }
     tmpVel *= speed;
+    if (movingFwd or movingBack or strafingLeft or strafingRight) {
+      velocity.x = tmpVel.x;
+      velocity.z = tmpVel.z;
+      if (flying) {
+        velocity.y = tmpVel.y;
+      }
+    }
 
+
+    if ((Input::isKeyDown(SDL_SCANCODE_SPACE) || Input::isKeyDown(SDL_SCANCODE_BACKSPACE)) && grounded) {
+      std::uniform_int_distribution<> dis(0, PLAYER_JUMP_SOUND.size()-1);
+      entity.getComponent<SoundSource>().playSound(
+        Environment::getDataDir() + PLAYER_JUMP_SOUND[dis(generator)]);
+      grounded = false;
+      velocity.y = JUMP_SPEED;
+    }
+
+    if (grounded) {
+      stepCounter += abs(velocity.x);
+      stepCounter += abs(velocity.z);
+
+      if(stepCounter>=2.5f) {
+        std::uniform_int_distribution<> dis(0, PLAYER_FOOT_SOUND.size()-1);
+        entity.getComponent<SoundSource>().playSound(
+          Environment::getDataDir() + PLAYER_FOOT_SOUND[dis(generator)]);
+        stepCounter-=2.5f;
+      }
+    }
   }
 }
 
