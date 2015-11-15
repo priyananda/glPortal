@@ -37,7 +37,7 @@ void GameController::handleEvent(const SDL_Event &event) {
     game->close();
   }
 
-  //  this->playerState->handleEvent(this->world->getPlayer(), event);
+  this->playerState->handleInput(*this->game);
   this->gameState->handleInput(*this->game);
 
   if (event.type == SDL_KEYDOWN) {

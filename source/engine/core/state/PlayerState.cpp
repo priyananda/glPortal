@@ -1,17 +1,27 @@
 #include "PlayerState.hpp"
 #include <engine/env/Environment.hpp>
+#include <PlayerMotion.hpp>
 
 namespace glPortal {
 
 PlayerState::PlayerState() {
   stateFunctionStack.push(&PlayerState::handleInputStanding);
 }
-void PlayerState::handleInput(Entity& player, const SDL_Event &event){
+void PlayerState::handleInput(Game& game){
   HandleEventFunction stateFunction = stateFunctionStack.top();
-  stateFunction(player, event);
-  stateFunctionStack.pop();
+  stateFunction(game);
 }
-void PlayerState::handleInputStanding(Entity& player, const SDL_Event &event){}
-void PlayerState::handleInputRunning(Entity& player, const SDL_Event &event){}
-void PlayerState::handleInputJumping(Entity& player, const SDL_Event &event){}
+void PlayerState::handleInputStanding(Game& game){
+  uint32_t updateTime = SDL_GetTicks();
+  float dtime = (updateTime-game.getWorld()->lastUpdateTime)/1000.f;
+  //  HandleEventFunction stateFunction = stateFunctionStack.top();
+  PlayerMotion &playerMotion = game.getWorld()->getPlayer().getComponent<PlayerMotion>();
+  bool movingForward = Input::isKeyDown(SDL_SCANCODE_W) or Input::isKeyDown(SDL_SCANCODE_UP);
+  if (movingForward){
+     playerMotion.moveForward(dtime);
+  }
+  //  playerMotion.
+}
+void PlayerState::handleInputRunning(Game& game){}
+void PlayerState::handleInputJumping(Game& game){}
 }

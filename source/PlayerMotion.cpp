@@ -30,6 +30,19 @@ void PlayerMotion::mouseLook() {
   rotation.x = Math::clamp(rotation.x, rad(-90.0f), rad(90.0f));
 }
 
+void PlayerMotion::moveForward(float dtime) {
+  Transform &tform = entity.getComponent<Transform>();
+  float rot = tform.rotation.y;
+  Vector3f tmpVel;
+  
+  tmpVel.x -= sin(rot);
+  tmpVel.z -= cos(rot);
+  //tmpVel *= (speed * dtime);
+  //tmpVel *= speed;
+  velocity.x = tmpVel.x;
+  velocity.z = tmpVel.z;
+}
+  
 void PlayerMotion::move(float dtime) {
   bool movingFwd     = Input::isKeyDown(SDL_SCANCODE_W) or Input::isKeyDown(SDL_SCANCODE_UP),
        movingBack    = Input::isKeyDown(SDL_SCANCODE_S) or Input::isKeyDown(SDL_SCANCODE_DOWN),
@@ -64,18 +77,15 @@ void PlayerMotion::move(float dtime) {
     Vector3f tmpVel;
     double yMult = flying ? cos(tform.rotation.x) : 1;
     if (movingFwd) {
-      tmpVel.x -= sin(rot) * yMult;
-      tmpVel.z -= cos(rot) * yMult;
-      if (flying) {
-        tmpVel.y += sin(tform.rotation.x);
-      }
+      //      tmpVel.x -= sin(rot) * yMult;
+      //      tmpVel.z -= cos(rot) * yMult;
+      //      if (flying) {
+      //        tmpVel.y += sin(tform.rotation.x);
+      //      }
     }
     if (movingBack) {
       tmpVel.x += sin(rot) * yMult;
       tmpVel.z += cos(rot) * yMult;
-      if (flying) {
-        tmpVel.y -= sin(tform.rotation.x);
-      }
     }
     if (strafingLeft) {
       tmpVel.x += -cos(rot);
@@ -91,11 +101,8 @@ void PlayerMotion::move(float dtime) {
     }
     tmpVel *= speed;
     if (movingFwd or movingBack or strafingLeft or strafingRight) {
-      velocity.x = tmpVel.x;
-      velocity.z = tmpVel.z;
-      if (flying) {
-        velocity.y = tmpVel.y;
-      }
+      velocity.x += tmpVel.x;
+      velocity.z += tmpVel.z;
     }
 
 

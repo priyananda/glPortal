@@ -63,6 +63,7 @@ public:
   // Movement
   void mouseLook();
   void move(float dtime);
+  void moveForward(float dtime);  
 
   Vector3f velocity;
   bool grounded;

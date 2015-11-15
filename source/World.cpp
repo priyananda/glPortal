@@ -55,6 +55,7 @@ World::World() :
   config(Environment::getConfig()) {
   stateFunctionStack.push(&GameState::handleRunning);
   stateFunctionStack.push(&GameState::handleSplash);
+  updateTime = SDL_GetTicks();
 }
 
 void World::create() {
@@ -110,7 +111,7 @@ void World::loadSceneFromPath(const std::string &path) {
 }
 
 void World::update() {
-  uint32_t updateTime = SDL_GetTicks();
+  updateTime = SDL_GetTicks();
   float dtime = (updateTime-lastUpdateTime)/1000.f;
   Entity &player = scene->player;
   Health &plrHealth = player.getComponent<Health>();

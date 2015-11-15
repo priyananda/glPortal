@@ -42,9 +42,10 @@ public:
   static float gravity;
   Scene *scene;
   std::stack<HandleGameFunction> stateFunctionStack;
-private:
   double gameTime;
+  uint32_t updateTime;
   uint32_t lastUpdateTime;
+private:
   bool wasF5Down = false;
   bool wasTabDown = false;
   Renderer *renderer;
