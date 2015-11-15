@@ -62,6 +62,8 @@ public:
 
   // Movement
   void mouseLook();
+  void applyGravity(float dtime);
+  void applyMinimaMaximaToVelocity(float dtime);
   void move(float dtime);
   void moveForward(float dtime);  
 
@@ -74,7 +76,6 @@ private:
   std::mt19937 generator;
   float stepCounter;
 };
-
 } /* namespace glPortal */
 
 #endif /* PLAYER_MOTION_HPP */
