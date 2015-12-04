@@ -41,7 +41,9 @@
 
 namespace glPortal {
 
-Renderer::Renderer() : viewport(nullptr), portalDepth(2), fontColor(1, 1, 1, 1){
+  Renderer::Renderer() : shader(nullptr), font(nullptr), vpWidth(0), vpHeight(0),
+                         scene(nullptr), viewport(nullptr),
+                         portalDepth(2), fontColor(1, 1, 1, 1){
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_CULL_FACE);
   glCullFace(GL_BACK);
@@ -277,7 +279,6 @@ void Renderer::renderPortal(const Camera &cam, const Entity &portal, const Entit
     // Draw the whole scene onto the stencil containing the player and recursive portal overlays
     Camera portalCam;
     setCameraInPortal(cam, portalCam, portal, otherPortal);
-    // TODO: rework to allow recursive rendering, and draw other portal pairs
     renderPlayer(portalCam);
     renderScene(portalCam);
     renderPortalOverlay(portalCam, portal);
@@ -408,8 +409,6 @@ void Renderer::setCameraInPortal(const Camera &cam, Camera &dest,
   dest.setAspect(cam.getAspect());
   dest.setFovy(cam.getFovy());
   dest.setZNear((p1T.position - cam.getPosition()).length());
-  //Matrix4f proj; dest.getProjMatrix(proj);
-  //dest.setProjMatrix(clipProjMat(portal, destView, proj));
   dest.setViewMatrix(destView);
 }
 
@@ -437,7 +436,6 @@ Matrix4f Renderer::clipProjMat(const Entity &ent,
 
   Vector4f c = clipPlane * (2.0f / dot(clipPlane, q));
 
-  // third row = clip plane - fourth row
   Matrix4f newProj = proj;
   newProj[2] = c.x - newProj[3];
   newProj[6] = c.y - newProj[7];
