@@ -14,7 +14,7 @@ matrix:
     - os: osx
       sudo: required
       osx_image: xcode8
-      compiler: clang
+      compiler: gcc
       git:
         submodules: false
       before_install:
