@@ -1,12 +1,24 @@
 sudo: required
+
 language: c++
+
+os:
+  - linux
+
+compiler:
+  - gcc
+  - clang
+
 services:
-  - docker
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker; fi
+
 before_install:
-- docker pull glportal/whale-gcc
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker pull glportal/whale-gcc; fi
+
 script:
-- docker run -it --rm -w /data -v $(pwd):/data glportal/whale-gcc bash -c "cmake ./; make; make tests;"
-- docker run -it --rm -w /data -v $(pwd):/data glportal/whale-gcc bash -c "./external/RadixEngine/tests/SystemGraphTest ./data"
-- docker run -it --rm -w /data -v $(pwd):/data glportal/whale-gcc bash -c "./external/RadixEngine/tests/XmlReadingTest"
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker run -it --rm -w /data -v $(pwd):/data glportal/whale-gcc bash -c "cmake ./; make; make tests;"; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker run -it --rm -w /data -v $(pwd):/data glportal/whale-gcc bash -c "./external/RadixEngine/tests/SystemGraphTest ./data"; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then docker run -it --rm -w /data -v $(pwd):/data glportal/whale-gcc bash -c "./external/RadixEngine/tests/XmlReadingTest"; fi
+
 notifications:
-  irc: "chat.freenode.net#glportal"
+#  irc: "chat.freenode.net#glportal"
