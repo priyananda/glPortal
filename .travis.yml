@@ -26,7 +26,7 @@ matrix:
         - brew install bullet
         - brew install tinyxml2
         - brew install unittest-cpp
-        - git submodule update --init --recursive --depth 30
+        - git submodule update --init --recursive --depth 150
       before_script:
         - mkdir build && cd build
       script:
