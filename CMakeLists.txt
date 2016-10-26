@@ -25,6 +25,8 @@ set(PORTAL_TEST_LIBRARIES ${PORTAL_LIBRARIES})
 
 if (${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
   add_definitions("-Wall")
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+  add_definitions("-Wno-error=invalid-constexpr")
 endif ()
 
 add_subdirectory(data)
