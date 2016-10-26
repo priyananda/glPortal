@@ -26,14 +26,13 @@ matrix:
         - brew install bullet
         - brew install tinyxml2
         - brew install unittest-cpp
+        - brew install freeimage
         - git submodule update --init --recursive
       before_script:
         - mkdir build && cd build
       script:
         - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$PWD/install ..
-        - make install -j4
-        - make tests -j4
-        - ctest -j4
+        - make -j4
 
 notifications:
 #  irc: "chat.freenode.net#glportal"
