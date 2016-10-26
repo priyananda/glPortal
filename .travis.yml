@@ -13,9 +13,27 @@ matrix:
         - docker run -it --rm -w /data -v $(pwd):/data glportal/whale-gcc bash -c "./external/RadixEngine/tests/XmlReadingTest"
     - os: osx
       sudo: required
-      compiler:
-        - gcc
-        - clang
+      osx_image: xcode8
+      compiler: clang
+      git:
+        submodules: false
+      before_install:
+        - brew update
+        - brew install assimp
+        - brew install libepoxy
+        - brew install sdl2
+        - brew install sdl2_mixer
+        - brew install bullet
+        - brew install tinyxml2
+        - brew install unittest-cpp
+        - git submodule update --init --recursive --depth 30
+      before_script:
+        - mkdir build && cd build
+      script:
+        - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$PWD/install ..
+        - make install -j4
+        - make tests -j4
+        - ctest -j4
 
 notifications:
 #  irc: "chat.freenode.net#glportal"
