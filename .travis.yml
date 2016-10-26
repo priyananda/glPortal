@@ -1,6 +1,6 @@
 sudo: required
 
-language: cpp
+language: generic
 
 matrix:
   include:
@@ -14,11 +14,12 @@ matrix:
     - os: osx
       sudo: required
       osx_image: xcode8
-      compiler: gcc
+      compiler: gcc-6
       git:
         submodules: false
       before_install:
         - brew update
+        - brew install gcc
         - brew install assimp
         - brew install libepoxy
         - brew install sdl2
