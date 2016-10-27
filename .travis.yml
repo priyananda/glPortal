@@ -14,12 +14,12 @@ matrix:
     - os: osx
       sudo: required
       osx_image: xcode8
-      compiler: gcc
+      compiler: gcc-5
       git:
         submodules: false
       before_install:
         - brew update
-        - brew install gcc
+#        - brew install gcc
         - brew install assimp
         - brew install libepoxy
         - brew install sdl2
@@ -31,8 +31,8 @@ matrix:
         - git submodule update --init --recursive
       before_script:
         - mkdir build && cd build
-        - CC=gcc-6
-        - CXX=g++-6
+#        - CC=gcc-6
+#        - CXX=g++-6
       script:
         - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$PWD/install ..
         - make -j4
