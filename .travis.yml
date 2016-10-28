@@ -20,6 +20,7 @@ matrix:
         submodules: false
       before_install:
         - brew update
+      install:
         - brew install gcc
         - brew install assimp
         - brew install libepoxy
@@ -29,10 +30,34 @@ matrix:
         - brew install tinyxml2
         - brew install unittest-cpp
         - brew install freeimage
-        - git submodule update --init --recursive
       before_script:
+        - git submodule update --init --recursive
         - mkdir build && cd build
-        - if [ "$CC" = "gcc" ]; then export CC=gcc-6 CXX=g++-6; fi
+        - export CC=gcc-6 CXX=g++-6
+      script:
+        - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$PWD/install ..
+        - make -j4
+    - os: osx
+      osx_image: xcode7.3
+      compiler:
+        - clang
+      git:
+        submodules: false
+      before_install:
+        - brew update
+      install:
+        - brew install gcc
+        - brew install assimp
+        - brew install libepoxy
+        - brew install sdl2
+        - brew install sdl2_mixer
+        - brew install bullet
+        - brew install tinyxml2
+        - brew install unittest-cpp
+        - brew install freeimage
+      before_script:
+        - git submodule update --init --recursive
+        - mkdir build && cd build
       script:
         - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$PWD/install ..
         - make -j4
