@@ -13,8 +13,7 @@ matrix:
         - docker run -it --rm -w /data -v $(pwd):/data glportal/whale-gcc bash -c "./external/RadixEngine/tests/XmlReadingTest"
     - os: osx
       osx_image: xcode7.3
-      compiler:
-        - gcc
+      compiler: gcc
       git:
         submodules: false
       before_install:
@@ -38,8 +37,7 @@ matrix:
         - make -j4
     - os: osx
       osx_image: xcode7.3
-      compiler:
-        - clang
+      compiler: clang
       git:
         submodules: false
       before_install:
