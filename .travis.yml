@@ -45,7 +45,6 @@ matrix:
       before_install:
         - brew update
       install:
-        - brew install gcc
         - brew install assimp
         - brew install libepoxy
         - brew install sdl2
