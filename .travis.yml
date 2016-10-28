@@ -59,4 +59,6 @@ matrix:
         - make -j4
 
 notifications:
-#  irc: "chat.freenode.net#glportal"
+  irc: "chat.freenode.net#glportal"
+  use_notice: true
+  skip_join: true
