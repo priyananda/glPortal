@@ -12,6 +12,9 @@ class World : public radix::World {
 public:
   World(radix::InputSource &input);
   ~World();
+
+  void shootPortal(int portal);
+  void hidePortals();
 };
 
 } /* namespace glPortal */

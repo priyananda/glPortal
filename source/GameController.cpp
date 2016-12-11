@@ -15,8 +15,16 @@ GameController::GameController(Game *game) {
 
 void GameController::initObservers() {
   this->closeWindowHolder = game->getWorld()->event.addObserver(
-      radix::InputSource::WindowCloseEvent::Type, [this](const radix::Event& event) {
-        this->game->close();
+    radix::InputSource::WindowCloseEvent::Type, [this](const radix::Event& event) {
+      this->game->close();
+    });
+  this->mouseButtonDownHolder = game->getWorld()->event.addObserver(
+    radix::InputSource::MouseButtonPressedEvent::Type, [this](const radix::Event& event) {
+      radix::InputSource::MouseButtonPressedEvent& mouseEvent =
+        (radix::InputSource::MouseButtonPressedEvent&) event;
+      if(mouseEvent.button == radix::InputSource::MouseButton::Left) {
+        game->getWorld()->shootPortal(1);
+      }
     });
 }
 

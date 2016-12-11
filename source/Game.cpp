@@ -4,6 +4,7 @@
 #include <iostream>
 #include <radix/component/Trigger.hpp>
 #include <radix/component/Player.hpp>
+#include <glPortal/system/PortalSystem.hpp>
 
 using namespace radix;
 
@@ -18,26 +19,20 @@ void Game::initHook() {
   world.stateFunctionStack.push(&GameState::handleRunning);
   world.stateFunctionStack.push(&GameState::handleSplash);
   gameController = std::make_unique<GameController>(this);
-  World& worldReference = static_cast<glPortal::World&>(world);
+  World& worldReference = *(getWorld());
+  worldReference.entityPairs.insert(std::make_pair("portalPairs", std::vector<EntityPair>()));
+  worldReference.systems.add<PortalSystem>();
   radix::Renderer& rendererReference = *renderer.get();
   gameRenderer =
     std::make_unique<GameRenderer>(worldReference, rendererReference, camera.get(), &dtime);
+  portalRenderer =
+    std::make_unique<PortalRenderer>(worldReference, rendererReference, *this);
   uiRenderer =
     std::make_unique<UiRenderer>(worldReference, rendererReference);
 
   renderer->addRenderer(*gameRenderer);
+  renderer->addRenderer(*portalRenderer);
   renderer->addRenderer(*uiRenderer);
-
-  Entity& entity = world.entities.create();
-  Transform& transform = entity.addComponent<Transform>();
-  transform.setPosition(world.getPlayer().getComponent<Transform>().getPosition());
-  transform.setOrientation(world.getPlayer().getComponent<Transform>().getOrientation());
-  transform.setScale(world.getPlayer().getComponent<Transform>().getScale());
-  entity.addComponent<Trigger>([] (BaseGame* game) {}, [] (BaseGame* game) {},
-                               [] (BaseGame* game) {
-                                 Util::Log() << "wooh I moved!";
-                               }, [] (BaseGame* game) {}
-                               );
 }
 
 void Game::processInput() {
