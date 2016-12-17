@@ -13,7 +13,7 @@ namespace glPortal {
 
 PortalRenderer::PortalRenderer(World &world, radix::Renderer &renderer, Game &game)
   : SubRenderer(world, renderer), game(game) {
-
+  initCamera();
 }
 
 void PortalRenderer::render() {
