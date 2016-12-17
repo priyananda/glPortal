@@ -7,11 +7,14 @@
 
 namespace glPortal {
 
+class World;
+
 class WorldHelper {
 public:
-  static void shootPortal(int button, radix::World &world);
-  static radix::EntityPair& getPortalPair(int pair, radix::World &world);
-  static void closePortals(radix::World &world);
+  static void shootPortal(int button, World &world);
+  static radix::EntityPair& getPortalPair(int pair, World &world);
+  static radix::EntityPair& initPortalPair(int pair, World &world);
+  static void closePortals(World &world);
 };
 
 } /* namespace glPortal */

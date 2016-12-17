@@ -1,4 +1,5 @@
 #include <glPortal/WorldHelper.hpp>
+#include <glPortal/World.hpp>
 #include <glPortal/Portal.hpp>
 
 #include <bullet/BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h>
@@ -7,14 +8,15 @@
 #include <radix/component/MeshDrawable.hpp>
 #include <radix/system/PhysicsSystem.hpp>
 #include <radix/component/LightSource.hpp>
+#include <radix/component/Transform.hpp>
 
 using namespace radix;
 
 namespace glPortal {
 
 void WorldHelper::shootPortal(int button, World &world) {
-  Vector3f cameraDir = Math::toDirection(world.camera.getOrientation());
-  btVector3 btFrom = world.camera.getPosition();
+  Vector3f cameraDir = Math::toDirection(world.getCamera().getOrientation());
+  btVector3 btFrom = world.getCamera().getPosition();
   btVector3 btTo = btFrom + cameraDir*10000;
   btCollisionWorld::ClosestRayResultCallback res(btFrom, btTo);
 
@@ -22,7 +24,6 @@ void WorldHelper::shootPortal(int button, World &world) {
   phys.getPhysicsWorld().rayTest(btFrom, btTo, res);
 
   if (res.hasHit()) {
-    Util::Log(Debug, "WorldHelper") << "Call!";
     const Entity *pEnt = reinterpret_cast<Entity*>(res.m_collisionObject->getUserPointer());
     // All RigidBodies should have their pointer set, but check anyway
     if (pEnt) {
@@ -36,7 +37,7 @@ void WorldHelper::shootPortal(int button, World &world) {
         Portal &portal = pEnt.getComponent<Portal>();
         portal.openSince = world.getTime();
         portal.maskTex.diffuse = TextureLoader::getTexture("portalmask.png");
-        portal.placeOnWall(world.camera.getPosition(), ipos, res.m_hitNormalWorld);
+        portal.placeOnWall(world.getCamera().getPosition(), ipos, res.m_hitNormalWorld);
         LightSource &pLight = pEnt.getComponent<LightSource>();
 
         if (button == 1) {
@@ -52,8 +53,34 @@ void WorldHelper::shootPortal(int button, World &world) {
 }
 
 EntityPair& WorldHelper::getPortalPair(int pair, World &world) {
+  if (world.entityPairs.at("portalPairs").size() <= (unsigned int) pair) {
+    return initPortalPair(pair, world);
+  } else {
+    return world.entityPairs.at("portalPairs").at(pair);
+  }
+}
+
+radix::EntityPair& WorldHelper::initPortalPair(int pair, World &world) {
+  world.entityPairs.at("portalPairs").reserve(pair + 1);
+  Entity &pEnt1 = world.entities.create();
+  Entity &pEnt2 = world.entities.create();
+
+  pEnt1.addComponent<Transform>();
+  pEnt1.addComponent<Portal>();
+  LightSource &ls1 = pEnt1.addComponent<LightSource>();
+
+  pEnt2.addComponent<Transform>();
+  pEnt2.addComponent<Portal>();
+  LightSource &ls2 = pEnt2.addComponent<LightSource>();
+
+  ls1.enabled = ls2.enabled = false;
+  ls1.energy = ls2.energy = 5;
+  ls1.distance = ls2.distance = 1.3f;
+
+  world.entityPairs.at("portalPairs").emplace_back(&pEnt1, &pEnt2);
   return world.entityPairs.at("portalPairs").at(pair);
 }
+
 
 void WorldHelper::closePortals(World &world) {
   EntityPair &pPair = getPortalPair(0, world);

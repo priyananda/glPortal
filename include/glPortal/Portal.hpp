@@ -23,6 +23,17 @@ public:
 
   Portal(radix::Entity &ent);
   ~Portal();
+
+  const char* getName() const {
+    return "Player";
+  }
+
+  TypeId getTypeId() const {
+    return Component::getTypeId<std::remove_reference<decltype(*this)>::type>();
+  }
+
+  void serialize(serine::Archiver &archiver);
+
   radix::Vector3f getDirection() const;
 
   void placeOnWall(const radix::Vector3f &launchPos, const radix::Vector3f &point, const radix::Vector3f &normal);
@@ -34,9 +45,9 @@ public:
   radix::Mesh overlayMesh, stencilMesh;
   radix::Vector3f direction, color;
   bool open;
-  std::unique_ptr<btDefaultMotionState> uncolliderMotionState;
-  std::unique_ptr<btCollisionShape> uncolliderShape;
-  std::unique_ptr<btCollisionObject> uncollider;
+  std::unique_ptr<btDefaultMotionState> motionState;
+  std::unique_ptr<btCollisionShape> shape;
+  std::unique_ptr<btCollisionObject> object;
   struct Wrapper {
     std::unique_ptr<btCollisionShape> vertShape, horzShape;
     struct Side {
