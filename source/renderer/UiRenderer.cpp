@@ -67,7 +67,7 @@ void UiRenderer::renderImage(radix::Vector3f position, radix::Vector3f scale, st
   const Mesh &mesh = MeshLoader::getMesh("GUIElement.obj");
   const Material &material = MaterialLoader::fromTexture(path);
 
-  Shader &sh = ShaderLoader::getShader("unshaded.frag");
+  Shader &sh = ShaderLoader::getFragAndVertShader("unshaded.frag");
   renderer.renderMesh(*renderContext.get(), sh, matrix, mesh, material);
   sh.release();
 }

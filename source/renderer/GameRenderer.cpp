@@ -120,7 +120,7 @@ void GameRenderer::renderViewFrames(RenderContext &rc) {
   glGetBooleanv(GL_DEPTH_WRITEMASK, &save_depth_mask);
   glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
   glDepthMask(GL_TRUE);
-  Shader shader = ShaderLoader::getShader("whitefill.frag");
+  Shader shader = ShaderLoader::getFragAndVertShader("whitefill.frag");
   Matrix4f modelMtx;
   for (size_t i = 0; i < rc.viewFramesStack.size(); i++) {
     renderer.renderMesh(rc, shader, modelMtx, rc.viewFramesStack[i].first, nullptr);
@@ -143,7 +143,7 @@ void GameRenderer::renderViewFrameStencil(RenderContext &rc) {
   glClear(GL_STENCIL_BUFFER_BIT);  // needs mask=0xFF
 
   rc.pushView(rc.viewStack[0]);
-  Shader shader = ShaderLoader::getShader("whitefill.frag");
+  Shader shader = ShaderLoader::getFragAndVertShader("whitefill.frag");
   Matrix4f modelMtx; rc.viewFramesStack.back().second.getModelMtx(modelMtx);
   renderer.renderMesh(rc, shader, modelMtx, rc.viewFramesStack.back().first, nullptr);
   rc.popView();
@@ -185,11 +185,11 @@ void GameRenderer::renderEntity(RenderContext &rc, const Entity &e) {
   e.getComponent<Transform>().getModelMtx(mtx);
 
   if (drawable.material.fancyname.compare("Metal tiles .5x") == 0) {
-    Shader &metal = ShaderLoader::getShader("metal.frag");
+    Shader &metal = ShaderLoader::getFragAndVertShader("metal.frag");
     renderer.renderMesh(rc, metal, mtx, drawable.mesh, drawable.material);
     metal.release();
   } else {
-    Shader &diffuse = ShaderLoader::getShader("diffuse.frag");
+    Shader &diffuse = ShaderLoader::getFragAndVertShader("diffuse.frag");
     renderer.renderMesh(rc, diffuse, mtx, drawable.mesh, drawable.material);
     diffuse.release();
   }
@@ -204,7 +204,7 @@ void GameRenderer::renderPlayer(RenderContext &rc) {
   const Mesh &dummy = MeshLoader::getMesh("HumanToken.obj");
   const Material &mat = MaterialLoader::fromTexture("HumanToken.png");
 
-  renderer.renderMesh(rc, ShaderLoader::getShader("diffuse.frag"), mtx, dummy, mat);
+  renderer.renderMesh(rc, ShaderLoader::getFragAndVertShader("diffuse.frag"), mtx, dummy, mat);
 }
 
 void GameRenderer::setCameraInPortal(const Camera &cam, Camera &dest,

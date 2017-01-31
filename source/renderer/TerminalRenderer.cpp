@@ -24,7 +24,7 @@ void TerminalRenderer::render(RenderContext &rc, World &world) {
   widget.translate(Vector3f(vpWidth/2, vpHeight-100, -5));
   widget.scale(Vector3f(vpWidth, 200, 1));
   const Mesh &mesh = MeshLoader::getMesh("GUIElement.obj");
-  Shader &sh = ShaderLoader::getShader("color.frag");
+  Shader &sh = ShaderLoader::getFragAndVertShader("color.frag");
   Terminal &term = world.entityAliases.at("activeTerminal")->getComponent<Terminal>();
   Vector4f screenBackgroundColor = term.backgroundColor;
   sh.bind();
