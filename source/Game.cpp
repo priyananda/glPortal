@@ -4,6 +4,8 @@
 #include <iostream>
 #include <radix/component/Trigger.hpp>
 #include <radix/component/Player.hpp>
+#include <SDL_opengl.h>
+#include <radix/system/ParticleSystem.hpp>
 
 using namespace radix;
 
@@ -19,6 +21,10 @@ void Game::initHook() {
   gameController = std::make_unique<GameController>(this);
   initRenderers();
   addRenderers();
+
+  emitter = &world.entityManager.create();
+  emitter->addComponent<Emitter>("hand.png", Vector3f(2.5, 1.0, 5.0), Vector3f(0, 1, 0), Vector3f(0, 2, 0), Vector4f(1, 0, 1, 1), 100, 200, 1, 30);
+  world.systems.get<ParticleSystem>().addEmitter(emitter->getComponent<Emitter>());
 }
 
 void Game::initFunctionStack() {
@@ -48,6 +54,7 @@ void Game::initRenderers() {
 void Game::addRenderers() {
   renderer->addRenderer(*gameRenderer);
   renderer->addRenderer(*uiRenderer);
+  renderer->addRenderer(*particleRenderer);
 }
 
 } /* namespace glPortal */

@@ -8,8 +8,9 @@
 #include <radix/renderer/Renderer.hpp>
 #include <radix/env/Config.hpp>
 #include <radix/BaseGame.hpp>
-#include "glPortal/renderer/GameRenderer.hpp"
-#include "glPortal/renderer/UiRenderer.hpp"
+#include <glPortal/renderer/GameRenderer.hpp>
+#include <glPortal/renderer/UiRenderer.hpp>
+#include <radix/component/Emitter.hpp>
 
 namespace glPortal {
 
@@ -29,6 +30,7 @@ private:
   double dtime;
   void initRenderers();
   void addRenderers();
+  radix::Entity *emitter;
 };
 
 } /* namespace glPortal */
