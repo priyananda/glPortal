@@ -10,6 +10,7 @@
 #include <radix/BaseGame.hpp>
 #include "glPortal/renderer/GameRenderer.hpp"
 #include "glPortal/renderer/UiRenderer.hpp"
+#include "glPortal/renderer/PortalRenderer.hpp"
 
 namespace glPortal {
 
@@ -23,6 +24,7 @@ public:
 private:
   std::unique_ptr<GameController> gameController;
   std::unique_ptr<GameRenderer> gameRenderer;
+  std::unique_ptr<PortalRenderer> portalRenderer;
   std::unique_ptr<UiRenderer> uiRenderer;
   void initHook();
   void initFunctionStack();

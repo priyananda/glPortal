@@ -40,6 +40,8 @@ void Game::initRenderers() {
   radix::Renderer& rendererReference = *renderer.get();
   gameRenderer =
     std::make_unique<GameRenderer>(worldReference, rendererReference, camera.get(), &dtime);
+  portalRenderer =
+    std::make_unique<PortalRenderer>(worldReference, rendererReference, camera.get(), &dtime);
   uiRenderer =
     std::make_unique<UiRenderer>(worldReference, rendererReference);
  }
