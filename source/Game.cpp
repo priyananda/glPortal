@@ -12,7 +12,7 @@ namespace glPortal {
 
 Game::Game() {
   windowTitle = "GlPortal";
-  defaultMap = "/packages/test/maps/teleportTriggerTerminalVelocity.xml";
+  defaultMap = "/maps/n1.xml";
 }
 
 void Game::initHook() {
@@ -47,6 +47,8 @@ void Game::initRenderers() {
     std::make_unique<GameRenderer>(worldReference, rendererReference, camera.get(), &dtime);
   uiRenderer =
     std::make_unique<UiRenderer>(worldReference, rendererReference);
+  portalRenderer =
+    std::make_unique<PortalRenderer>(worldReference, rendererReference, *this);
  }
 
 void Game::addRenderers() {
