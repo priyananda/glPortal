@@ -9,6 +9,8 @@
 #include <radix/system/PhysicsSystem.hpp>
 #include <radix/component/LightSource.hpp>
 #include <radix/component/Transform.hpp>
+#include <radix/component/Trigger.hpp>
+#include <glPortal/trigger/PortalTeleport.hpp>
 
 using namespace radix;
 
@@ -65,12 +67,19 @@ radix::EntityPair& WorldHelper::initPortalPair(int pair, World &world) {
   Entity &pEnt1 = world.entityManager.create();
   Entity &pEnt2 = world.entityManager.create();
 
+  std::string pEnt1Id = std::to_string(pEnt1.id);
+  std::string pEnt2Id = std::to_string(pEnt2.id);
+
   pEnt1.addComponent<Transform>();
   pEnt1.addComponent<Portal>();
+  pEnt1.addComponent<Trigger>();
+  PortalTeleport::setAction(pEnt1, pEnt2Id);
   LightSource &ls1 = pEnt1.addComponent<LightSource>();
 
   pEnt2.addComponent<Transform>();
   pEnt2.addComponent<Portal>();
+  pEnt2.addComponent<Trigger>();
+  PortalTeleport::setAction(pEnt2, pEnt1Id);
   LightSource &ls2 = pEnt2.addComponent<LightSource>();
 
   ls1.enabled = ls2.enabled = false;

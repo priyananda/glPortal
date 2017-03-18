@@ -141,6 +141,10 @@ void Portal::placeOnWall(const Vector3f &launchPos, const Vector3f &point, const
   t.setPosition(position);
   t.setOrientation(orientation);
   t.setScale(scale);
+
+  /* update destination */
+  entity.manager.world.destinations[std::to_string(entity.id)] =
+    Destination {position, orientation.toAero()};
 }
 
 Vector3f Portal::getScaleMult() const {
