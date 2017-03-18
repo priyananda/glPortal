@@ -34,11 +34,9 @@ Portal::Portal(Entity &ent) : radix::Component(ent), openSince(0), open(false) {
   Transform &transform = ent.getComponent<Transform>();
   uncollider->setWorldTransform(btTransform(transform.getOrientation(), transform.getPosition()));
   uncollider->setUserPointer(&entity);
-  Uncollider::volumes.emplace_back(uncollider.get());
 }
 
 Portal::~Portal() {
-  Uncollider::volumes.remove(uncollider.get());
 }
 
 Vector3f Portal::getDirection() const {
