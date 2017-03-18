@@ -24,21 +24,21 @@ const double Portal::OPEN_ANIM_DURATION = .250;
 const float Portal::SURFACE_OFFSET = 0.01f;
 
 Portal::Portal(Entity &ent) : radix::Component(ent), openSince(0), open(false) {
-  motionState.reset(new btDefaultMotionState);
+  uncolliderMotionState.reset(new btDefaultMotionState);
   wrapper.vertShape.reset(new btBoxShape(btVector3(0.1, 1, 0.5)));
   wrapper.horzShape.reset(new btBoxShape(btVector3(.5, 0.1, 0.5)));
   // TODO Handle collision subtraction better
-  btRigidBody::btRigidBodyConstructionInfo constructionInfo(0, motionState.get(), shape.get(),
+  btRigidBody::btRigidBodyConstructionInfo constructionInfo(0, uncolliderMotionState.get(), uncolliderShape.get(),
                                                             btVector3(0, 0 ,0));
-  object.reset(new btRigidBody(constructionInfo));
+  uncollider.reset(new btRigidBody(constructionInfo));
   Transform &transform = ent.getComponent<Transform>();
-  object->setWorldTransform(btTransform(transform.getOrientation(), transform.getPosition()));
-  object->setUserPointer(&entity);
-  Uncollider::volumes.emplace_back(object.get());
+  uncollider->setWorldTransform(btTransform(transform.getOrientation(), transform.getPosition()));
+  uncollider->setUserPointer(&entity);
+  Uncollider::volumes.emplace_back(uncollider.get());
 }
 
 Portal::~Portal() {
-  Uncollider::volumes.remove(object.get());
+  Uncollider::volumes.remove(uncollider.get());
 }
 
 Vector3f Portal::getDirection() const {
@@ -124,14 +124,14 @@ void Portal::placeOnWall(const Vector3f &launchPos, const Vector3f &point, const
   placeWrapperPiece(position, orientation, scale,
     wrapper.vertShape, wrapper.left, Vector3f(-0.576, 0, 0.501));
 
-  motionState->setWorldTransform(
+  uncolliderMotionState->setWorldTransform(
     btTransform(btQuaternion(0, 0, 0, 1), position) *
     btTransform(orientation) *
     btTransform(btQuaternion(0, 0, 0, 1), btVector3(0, 0, 0.499)));
-  shape.reset(new btBoxShape(scale/2));
-  btRigidBody::btRigidBodyConstructionInfo ci(0, motionState.get(),
-    shape.get(), btVector3(0, 0, 0));
-  object.reset(new btRigidBody(ci));
+  uncolliderShape.reset(new btBoxShape(scale/2));
+  btRigidBody::btRigidBodyConstructionInfo ci(0, uncolliderMotionState.get(),
+    uncolliderShape.get(), btVector3(0, 0, 0));
+  uncollider.reset(new btRigidBody(ci));
 
   open = true;
   position += (getDirection() * SURFACE_OFFSET);

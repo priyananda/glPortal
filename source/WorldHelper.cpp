@@ -15,8 +15,8 @@ using namespace radix;
 namespace glPortal {
 
 void WorldHelper::shootPortal(int button, World &world) {
-  Vector3f cameraDir = Math::toDirection(world.getCamera().getOrientation());
-  btVector3 btFrom = world.getCamera().getPosition();
+  Vector3f cameraDir = Math::toDirection(world.camera.getOrientation());
+  btVector3 btFrom = world.camera.getPosition();
   btVector3 btTo = btFrom + cameraDir*10000;
   btCollisionWorld::ClosestRayResultCallback res(btFrom, btTo);
 
@@ -37,7 +37,7 @@ void WorldHelper::shootPortal(int button, World &world) {
         Portal &portal = pEnt.getComponent<Portal>();
         portal.openSince = world.getTime();
         portal.maskTex.diffuse = TextureLoader::getTexture("portalmask.png");
-        portal.placeOnWall(world.getCamera().getPosition(), ipos, res.m_hitNormalWorld);
+        portal.placeOnWall(world.camera.getPosition(), ipos, res.m_hitNormalWorld);
         LightSource &pLight = pEnt.getComponent<LightSource>();
 
         if (button == 1) {
@@ -62,8 +62,8 @@ EntityPair& WorldHelper::getPortalPair(int pair, World &world) {
 
 radix::EntityPair& WorldHelper::initPortalPair(int pair, World &world) {
   world.entityPairs.at("portalPairs").reserve(pair + 1);
-  Entity &pEnt1 = world.entities.create();
-  Entity &pEnt2 = world.entities.create();
+  Entity &pEnt1 = world.entityManager.create();
+  Entity &pEnt2 = world.entityManager.create();
 
   pEnt1.addComponent<Transform>();
   pEnt1.addComponent<Portal>();
