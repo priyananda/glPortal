@@ -1,13 +1,25 @@
 #include <glPortal/GameState.hpp>
 #include <glPortal/Game.hpp>
 
-#include <radix/screen/XmlScreenLoader.hpp>
+#include <radix/data/screen/XmlScreenLoader.hpp>
 #include <radix/env/Environment.hpp>
 #include <radix/component/Player.hpp>
 
 namespace glPortal {
 
 radix::EventDispatcher::CallbackHolder GameState::splashCallbackHolder;
+radix::EventDispatcher::CallbackHolder GameState::winCallbackHolder;
+
+void GameState::init(radix::BaseGame &game) {
+  winCallbackHolder = game.getWorld()->event.addObserver
+    (
+      radix::GameState::WinEvent::Type, [&game](const radix::Event &event) {
+        game.getWorld()->stateFunctionStack.push(&GameState::handleGameOverScreen);
+      }
+    );
+
+  winCallbackHolder.setStatic();
+}
 
 void GameState::handleRunning(radix::BaseGame &game) {
   radix::Player &player = game.getWorld()->getPlayer().getComponent<radix::Player>();
@@ -24,10 +36,15 @@ void GameState::handleRunning(radix::BaseGame &game) {
          game.getWorld()->stateFunctionStack.push(&GameState::handlePaused);
        }
      });
+
+  if (!splashCallbackHolder.getStatic()) {
+    splashCallbackHolder.setStatic();
+  }
 }
 
 void GameState::handlePaused(radix::BaseGame &game) {
-  radix::Screen &screen = radix::XmlScreenLoader::getScreen(radix::Environment::getDataDir() + "/screens/test.xml");
+  radix::Screen &screen = radix::XmlScreenLoader::getScreen(radix::Environment::getDataDir()
+                                                            + "/screens/title.xml");
   game.getGameWorld()->addScreen(screen);
   radix::Player &player = game.getWorld()->getPlayer().getComponent<radix::Player>();
 
@@ -57,7 +74,13 @@ void GameState::handleSplash(radix::BaseGame &game) {
 
 void GameState::handleMenu(radix::BaseGame &game) { }
 
-void GameState::handleGameOverScreen(radix::BaseGame &game) { }
+void GameState::handleGameOverScreen(radix::BaseGame &game) {
+  radix::Player &player = game.getWorld()->getPlayer().getComponent<radix::Player>();
+  player.frozen = true;
+  radix::Screen &screen =
+    radix::XmlScreenLoader::getScreen(radix::Environment::getDataDir() + "/screens/end.xml");
+  game.getGameWorld()->addScreen(screen);
+}
 
 void GameState::handleWinScreen(radix::BaseGame &game) { }
 

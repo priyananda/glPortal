@@ -1,15 +1,15 @@
 #include <glPortal/renderer/GameRenderer.hpp>
 #include <glPortal/World.hpp>
 
-#include <epoxy/gl.h>
+#include <radix/core/gl/OpenGL.hpp>
 
 #include <radix/renderer/Renderer.hpp>
 #include <radix/Viewport.hpp>
 #include <radix/component/ViewFrame.hpp>
 #include <radix/component/MeshDrawable.hpp>
-#include <radix/shader/ShaderLoader.hpp>
-#include <radix/model/MeshLoader.hpp>
-#include <radix/material/MaterialLoader.hpp>
+#include <radix/data/shader/ShaderLoader.hpp>
+#include <radix/data/model/MeshLoader.hpp>
+#include <radix/data/material/MaterialLoader.hpp>
 
 using namespace radix;
 
@@ -55,29 +55,29 @@ void GameRenderer::render() {
   renderScene(*renderContext);
 }
 
-void GameRenderer::renderScene(RenderContext &rc) {
-  if (rc.viewFramesStack.size() > rc.viewStackMaxDepth) {
+void GameRenderer::renderScene(RenderContext &renderContext) {
+  if (renderContext.viewFramesStack.size() > renderContext.viewStackMaxDepth) {
     return;
   }
   RectangleI scissor;
-  if (rc.viewFramesStack.size() > 0) {
-    const RenderContext::ViewFrameInfo &vfi = rc.getViewFrame();
+  if (renderContext.viewFramesStack.size() > 0) {
+    const RenderContext::ViewFrameInfo &vfi = renderContext.getViewFrame();
     // Don't render further if computed clip rect is zero-sized
-    if (not renderer.clipViewFrame(rc, vfi.first, vfi.second, scissor)) {
+    if (not renderer.clipViewFrame(renderContext, vfi.first, vfi.second, scissor)) {
       return;
     }
   }
 
   glClear(GL_DEPTH_BUFFER_BIT);
 
-  renderViewFrames(rc);
+  renderViewFrames(renderContext);
 
-  if (rc.viewFramesStack.size() > 0) {
+  if (renderContext.viewFramesStack.size() > 0) {
     glScissor(scissor.x, scissor.y, scissor.w, scissor.h);
-    renderViewFrameStencil(rc);
+    renderViewFrameStencil(renderContext);
   }
 
-  renderEntities(rc);
+  renderEntities(renderContext);
 }
 
 void GameRenderer::renderViewFrames(RenderContext &rc) {
@@ -88,11 +88,11 @@ void GameRenderer::renderViewFrames(RenderContext &rc) {
 
   glEnable(GL_STENCIL_TEST);
   glEnable(GL_SCISSOR_TEST);
-  for (Entity &e : world.entities) {
-    if (e.hasComponent<ViewFrame>()) {
-      const Transform &t = e.getComponent<Transform>();
+  for (Entity &entity : world.entityManager) {
+    if (entity.hasComponent<ViewFrame>()) {
+      const Transform &t = entity.getComponent<Transform>();
       Matrix4f inMat; t.getModelMtx(inMat);
-      const ViewFrame &vf = e.getComponent<ViewFrame>();
+      const ViewFrame &vf = entity.getComponent<ViewFrame>();
       Matrix4f outMat;
       outMat.translate(vf.view.getPosition());
       outMat.rotate(vf.view.getOrientation());
@@ -162,7 +162,6 @@ void GameRenderer::renderViewFrameStencil(RenderContext &rc) {
   }
   shader.release();
 
-  //glColorMask(GL_TRUE, GL_TRUE, GL_FALSE, GL_TRUE);  // blue-ish filter if drawing on white or grey
   glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
   glDepthMask(GL_TRUE);
   glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
@@ -173,7 +172,7 @@ void GameRenderer::renderViewFrameStencil(RenderContext &rc) {
 }
 
 void GameRenderer::renderEntities(RenderContext &rc) {
-  for (Entity &e : world.entities) {
+  for (Entity &e : world.entityManager) {
     if (e.hasComponent<MeshDrawable>()) {
       renderEntity(rc, e);
     }

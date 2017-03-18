@@ -1,1 +1,1 @@
-#define GAME_VERSION "0.4.0-90-g1a49a51"
+#define GAME_VERSION "development"

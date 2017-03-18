@@ -1,11 +1,11 @@
 #include <glPortal/renderer/TerminalRenderer.hpp>
 #include <glPortal/component/Terminal.hpp>
 
-#include <epoxy/gl.h>
+#include <radix/core/gl/OpenGL.hpp>
 
 #include <radix/renderer/Renderer.hpp>
-#include <radix/model/MeshLoader.hpp>
-#include <radix/shader/ShaderLoader.hpp>
+#include <radix/data/model/MeshLoader.hpp>
+#include <radix/data/shader/ShaderLoader.hpp>
 #include <radix/Viewport.hpp>
 
 using namespace radix;

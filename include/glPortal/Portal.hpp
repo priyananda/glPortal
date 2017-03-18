@@ -2,13 +2,13 @@
 #define PORTAL_HPP
 
 #include <memory>
-#include <bullet/BulletCollision/btBulletCollisionCommon.h>
+#include <bullet/btBulletCollisionCommon.h>
 
 #include <radix/component/Component.hpp>
 #include <radix/core/math/Vector3f.hpp>
 #include <radix/core/math/Quaternion.hpp>
-#include <radix/material/Material.hpp>
-#include <radix/model/Mesh.hpp>
+#include <radix/data/material/Material.hpp>
+#include <radix/data/model/Mesh.hpp>
 
 namespace glPortal {
 
@@ -45,9 +45,10 @@ public:
   radix::Mesh overlayMesh, stencilMesh;
   radix::Vector3f direction, color;
   bool open;
-  std::unique_ptr<btDefaultMotionState> motionState;
-  std::unique_ptr<btCollisionShape> shape;
-  std::unique_ptr<btCollisionObject> object;
+  bool isUncolliderActive = false;
+  std::unique_ptr<btDefaultMotionState> uncolliderMotionState;
+  std::unique_ptr<btCollisionShape> uncolliderShape;
+  std::unique_ptr<btCollisionObject> uncollider;
   struct Wrapper {
     std::unique_ptr<btCollisionShape> vertShape, horzShape;
     struct Side {
