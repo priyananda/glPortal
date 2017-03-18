@@ -27,6 +27,9 @@ void GameController::initObservers() {
       if(mouseEvent.button == radix::InputSource::MouseButton::Left) {
         game->getWorld()->shootPortal(1);
       }
+      if(mouseEvent.button == radix::InputSource::MouseButton::Right) {
+        game->getWorld()->shootPortal(2);
+      }
     });
 }
 
