@@ -35,7 +35,7 @@ void PortalRenderer::render() {
       glDepthMask(GL_TRUE);
       glClear(GL_DEPTH_BUFFER_BIT);
 
-      const radix::Mesh &portalStencil = radix::MeshLoader::getMesh("PortalStensil.obj");
+      const radix::Mesh &portalStencil = radix::MeshLoader::getMesh("PortalStencil.obj");
 
       radix::Matrix4f matrix;
       portalEntity1.getComponent<radix::Transform>().getModelMtx(matrix);
