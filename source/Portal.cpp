@@ -134,7 +134,7 @@ void Portal::placeOnWall(const Vector3f &launchPos, const Vector3f &point, const
 }
 
 Vector3f Portal::getScaleMult() const {
-  double delta = entity.manager.world.getTime()-openSince;
+  double delta = entity.manager.world.safeGetgameTime()-openSince;
   if (delta > OPEN_ANIM_DURATION) {
     return Vector3f(1, 1, 1);
   }
@@ -152,6 +152,7 @@ Vector3f Portal::getScaleMult() const {
     s = -0.5f * (s*(s-2) - 1);
   }
 
+  entity.manager.world.relinquishgameTimeMutex();
   return Vector3f(s, s, s);
 }
 
