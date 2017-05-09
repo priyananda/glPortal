@@ -33,7 +33,7 @@ void WorldHelper::shootPortal(int button, World &world) {
         Vector3f ipos(res.m_hitPointWorld);
         Entity &pEnt = (button == 1) ? *pPair.first : *pPair.second;
         Portal &portal = pEnt.getComponent<Portal>();
-        portal.openSince = world.safeGetgameTime();
+        portal.openSince = world.getTime();
         portal.maskTex.diffuse = TextureLoader::getTexture("portalmask.png");
         portal.placeOnWall(world.camera->getPosition(), ipos, res.m_hitNormalWorld);
         LightSource &pLight = pEnt.getComponent<LightSource>();
@@ -45,7 +45,6 @@ void WorldHelper::shootPortal(int button, World &world) {
           portal.overlayTex.diffuse = TextureLoader::getTexture("orangeportal.png");
           portal.color = pLight.color = Portal::ORANGE_COLOR;
         }
-        world.relinquishgameTimeMutex();
       }
     }
   }
