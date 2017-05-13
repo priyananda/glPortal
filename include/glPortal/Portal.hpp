@@ -23,6 +23,17 @@ public:
 
   Portal(radix::Entity &ent);
   ~Portal();
+
+  const char* getName() const {
+    return "Player";
+  }
+
+  TypeId getTypeId() const {
+    return Component::getTypeId<std::remove_reference<decltype(*this)>::type>();
+  }
+
+  void serialize(serine::Archiver &archiver);
+
   radix::Vector3f getDirection() const;
 
   void placeOnWall(const radix::Vector3f &launchPos, const radix::Vector3f &point, const radix::Vector3f &normal);

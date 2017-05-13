@@ -65,7 +65,7 @@ void GameState::handleSplash(radix::BaseGame &game) {
   radix::Player &player = game.getWorld()->getPlayer().getComponent<radix::Player>();
   player.frozen = true;
   radix::Screen &screen =
-    radix::XmlScreenLoader::getScreen(radix::Environment::getDataDir() + "/screens/test.xml");
+    radix::XmlScreenLoader::getScreen(radix::Environment::getDataDir() + "/screens/title.xml");
   game.getGameWorld()->addScreen(screen);
   if (game.getWindow().isKeyDown(SDL_SCANCODE_RETURN)) {
     game.getWorld()->stateFunctionStack.pop();

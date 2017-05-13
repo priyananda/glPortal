@@ -8,7 +8,8 @@ add_executable(${EXE_NAME}
   renderer/TerminalRenderer.cpp
   renderer/UiRenderer.cpp
   renderer/GameRenderer.cpp
-        trigger/PortalTeleport.cpp
+  renderer/PortalRenderer.cpp
+  trigger/PortalTeleport.cpp
   Editor.cpp
   Main.cpp
   Game.cpp

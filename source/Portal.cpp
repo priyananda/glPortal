@@ -28,15 +28,23 @@ Portal::Portal(Entity &ent) : radix::Component(ent), openSince(0), open(false) {
   wrapper.vertShape.reset(new btBoxShape(btVector3(0.1, 1, 0.5)));
   wrapper.horzShape.reset(new btBoxShape(btVector3(.5, 0.1, 0.5)));
   // TODO Handle collision subtraction better
-  Uncollider::volumes.emplace_back(uncollider.get());
+  btRigidBody::btRigidBodyConstructionInfo constructionInfo(0, uncolliderMotionState.get(), uncolliderShape.get(),
+                                                            btVector3(0, 0 ,0));
+  uncollider.reset(new btRigidBody(constructionInfo));
+  Transform &transform = ent.getComponent<Transform>();
+  uncollider->setWorldTransform(btTransform(transform.getOrientation(), transform.getPosition()));
+  uncollider->setUserPointer(&entity);
 }
 
 Portal::~Portal() {
-  Uncollider::volumes.remove(uncollider.get());
 }
 
 Vector3f Portal::getDirection() const {
   return direction;
+}
+
+void Portal::serialize(serine::Archiver &archiver) {
+
 }
 
 void Portal::placeWrapperPiece(const Vector3f &p, const Quaternion &o, const Vector3f &s,
@@ -131,6 +139,10 @@ void Portal::placeOnWall(const Vector3f &launchPos, const Vector3f &point, const
   t.setPosition(position);
   t.setOrientation(orientation);
   t.setScale(scale);
+
+  /* update destination */
+  entity.manager.world.destinations[std::to_string(entity.id)] =
+    Destination {position, orientation.toAero()};
 }
 
 Vector3f Portal::getScaleMult() const {
